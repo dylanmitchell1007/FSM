@@ -6,35 +6,103 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication1
 {
-    delegate void handler();
+    delegate void Handler();
     delegate void Callback();
     delegate void CallbackString(State St);
     class CurrentPlayer
     {
-       public CurrentPlayer()
+        public CurrentPlayer()
         {
+
+        }
+    }
+
+    public enum GameStates
+    {
+        INIT,
+        START,
+        EXIT,
+    }
+
+    class Program
+    {
+        
+        class Player
+        {
+            public Player()
+            {
+                onTalk = null;
+                hp = 100;
+                onDamaged += TakeDamage;
+                onDamaged += DeathSound;
+
+            }
+            public void DeathSound(int num)
+            {
+
+            }
+            public void Attack(Player other)
+            {
+                other.onDamaged.Invoke(attackPower);
+            }
+
+            public void TakeDamage(int amount)
+            {                
+                hp -= amount;
+            }
+
+            int attackPower;
+            int hp;
+            public void Talk(string s)
+            {
+                onTalk.Invoke(s);
+            }
+            public Callback<string> onTalk;            
             
+            public void AddTalk(Delegate cb)
+            {
+                onTalk += cb as Callback<string>;
+            }
+
+            OnDamaged<int> onDamaged;
+        }
+        public delegate void OnDamaged<T>(T p);
+        
+        static void Main(string[] args)
+        {
+            Player player = new Player();
+            Player dylan = new Player();
+            Player matthew = new Player();
+            dylan.Attack(matthew);
+            player.AddTalk((Callback<string>)SaySomething);
+            player.AddTalk((Callback<string>)SayAnotherThing);
+            player.Talk("\n -Dylan:");
+
+
         }
 
        
-
-    }
-    class Program
-    {
-        static void Main(string[] args)
+        static public void ChangeState(GameStates gs)
         {
-            FSM<Player> fsm = new FSM<Player>();
-            fsm.AddTransition(Player.INIT, Player.IDLE);
-            fsm.AddTransition(Player.IDLE, Player.WALK);
-            fsm.AddTransition(Player.WALK, Player.RUN);
-            fsm.AddTransition(Player.RUN, Player.WALK);
-            fsm.Start(Player.INIT);
-            fsm.ChangeState(Player.IDLE);
 
         }
+        delegate void Callback();
+        delegate void Callback<T>(T n);
+        static public void SaySomething(string s)
+        {
+            Console.WriteLine("-SaySomething " + s);
+        }
+
+        static public void SayAnotherThing(string s)
+        {            
+            Console.WriteLine("-SayAnotherThing " + s);
+
+        }
+        
+        
     }
-   
-
-
-
 }
+
+
+
+

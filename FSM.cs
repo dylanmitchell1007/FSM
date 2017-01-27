@@ -9,41 +9,40 @@ namespace ConsoleApplication1
 {
     class FSM<T>
     {
+
+
         public FSM()
         {
-            
+            current = null;
+            transitions = new Dictionary<string, List<State>>();
             states = new Dictionary<string, State>();
             var v = Enum.GetValues(typeof(T));
-            foreach (var e in v) 
+            foreach (var e in v)
             {
                 State s = new State(e as Enum);
                 states.Add(s.name, s);
             }
         }
-        Dictionary<string, State> states;
-        State cState;
-
+        Dictionary<string, State> states;        
         State current;
+        private Dictionary<string, List<State>> transitions;
 
-        public void ChangeState(T state)
+        public void ChangeState(T e)
         {
-            string Key = CurrentPlayer.ToString() + "->" + (state as Enum).ToString();
-
-
-
-            if (isValidTransition(state))
+            string Key = current.ToString() + "->" + (e as Enum).ToString();
+            if (transitions[Key] != null)
             {
-                cState.onExit();
-                cState = state;
-                cState.onExit();
+                current.onExit.Invoke();
+                current = states[(e as Enum).ToString()];
+                current.onEnter.Invoke();
             }
         }
 
-      
+
 
         public bool AddState(State state)
         {
-            if(transitions[state.name] == null)
+            if (transitions[state.name] == null)
             {
                 transitions.Add(state.name, new List<State>());
                 return true;
@@ -67,12 +66,9 @@ namespace ConsoleApplication1
             return states[key];
         }
 
-
-
-        private Dictionary<string, List<State>> transitions = new Dictionary<string, List<State>>();
         private bool isValidTransition(State to)
         {
-            var validStates = transitions[cState.name];
+            var validStates = transitions[current.name];
             if (validStates == null)
                 return false;
             foreach (var state in validStates)
@@ -86,7 +82,7 @@ namespace ConsoleApplication1
 
 
 
-            public bool Start(T state)
+        public bool Start(T state)
         {
             return true;
         }
@@ -101,6 +97,6 @@ namespace ConsoleApplication1
 
 
 
-        }
     }
+}
 
