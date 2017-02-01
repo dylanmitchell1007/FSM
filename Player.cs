@@ -26,7 +26,7 @@ namespace ConsoleApplication1
     /// </summary>
 public interface IDamageable
     {
-
+        void TakeDamage()
 
 
 
@@ -45,6 +45,11 @@ public interface IDamageable
             name = null;
             Health = 100;
             Attack = 15;
+        }
+
+        public void TakeDamage()
+        {
+            throw new NotImplementedException();
         }
     }
    class Zombie : IDamageable
