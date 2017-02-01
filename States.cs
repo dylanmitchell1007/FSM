@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication1
 {
-    class State
+    class State : SuperState
     {
+        public delegate void Handler();
         public State()
         { }
         public State(Enum e)
         {
+            onEnter = null;
+            onExit = null;
             name = e.ToString();
         }
         public string name;
@@ -28,6 +31,25 @@ namespace ConsoleApplication1
         {
             onExit += a as OnExit;
         }
+        public override void Start()
+        {
+            Console.WriteLine("States Name" + this.name);
+        }
+        public override void Update()
+        {
+            throw new NotImplementedException();
+        }
+        public override void Exit()
+        {
+            Console.WriteLine("Exit state " + this.name);
+        }
+
+    }
+    public abstract class SuperState
+    {
+        public abstract void Start();
+        public abstract void Update();
+        public abstract void Exit();
     }
 
 }
